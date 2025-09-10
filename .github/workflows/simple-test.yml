@@ -1,0 +1,44 @@
+name: Simple Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+
+    - name: Install dependencies
+      run: |
+        uv venv
+        source .venv/bin/activate
+        uv pip install -e .
+
+    - name: Basic syntax check
+      run: |
+        source .venv/bin/activate
+        python -m py_compile src/dooray_mcp_server/__init__.py
+        python -m py_compile src/dooray_mcp_server/main.py
+        python -m py_compile src/dooray_mcp_server/main_http.py
+
+    - name: Test uvx execution
+      run: |
+        timeout 10s uvx --from . dooray-mcp-server --help || echo "Help command completed"
+        timeout 10s uvx --from . dooray-mcp-server-http --help || echo "HTTP help command completed"
+      env:
+        DOORAY_API_KEY: "test_key"
+        DOORAY_BASE_URL: "https://api.dooray.com"

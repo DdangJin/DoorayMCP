@@ -8,7 +8,6 @@
       "Bash(git remote set-url:*)",
       "WebFetch(domain:github.com)",
       "Bash(curl:*)",
-      "Bash(./scripts/docker-build.sh:*)",
       "Bash(export:*)",
       "Bash(git tag:*)",
       "Bash(gh run list:*)",
@@ -19,7 +18,9 @@
       "WebFetch(domain:pydooray.readthedocs.io)",
       "Bash(timeout:*)",
       "Bash(python:*)",
-      "Bash(uv:*)"
+      "Bash(uv:*)",
+      "Bash(gh run view:*)",
+      "Bash(ruff check:*)"
     ],
     "deny": [],
     "ask": [],

@@ -1,10 +1,8 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline (Disabled)
 
+# Temporarily disabled for development
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:  # Only manual trigger
   release:
     types: [ published ]
 

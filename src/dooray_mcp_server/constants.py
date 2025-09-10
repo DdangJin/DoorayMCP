@@ -1,0 +1,18 @@
+"""Constants for Dooray MCP Server."""
+
+# Environment variable names
+DOORAY_API_KEY = "DOORAY_API_KEY"
+DOORAY_BASE_URL = "DOORAY_BASE_URL"
+DOORAY_LOG_LEVEL = "DOORAY_LOG_LEVEL"
+DOORAY_HTTP_LOG_LEVEL = "DOORAY_HTTP_LOG_LEVEL"
+
+# Default values
+DEFAULT_HOST = "127.0.0.1"
+DEFAULT_PORT = 8080
+DEFAULT_PATH = "/mcp"
+DEFAULT_LOG_LEVEL = "WARN"
+DEFAULT_HTTP_LOG_LEVEL = "WARN"
+
+# Server configuration
+SERVER_NAME = "dooray-mcp-server"
+SERVER_VERSION = "0.2.1"

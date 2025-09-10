@@ -1,66 +1,58 @@
-# 멀티스테이지 빌드: 빌드 스테이지
-FROM gradle:8.10-jdk21 AS builder
+# Multi-stage build for Python Dooray MCP Server
+FROM python:3.11-slim as builder
 
-# 작업 디렉토리 설정
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy requirements and install dependencies
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Production stage
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Create non-root user
+RUN groupadd -r dooray && useradd -r -g dooray dooray
+
+# Create application directory
 WORKDIR /app
 
-# ARM64 빌드를 위한 JVM 메모리 최적화
-ENV JAVA_OPTS="-Xmx1g -XX:MaxMetaspaceSize=256m"
-ENV GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx1g"
+# Copy application code
+COPY src/ ./src/
+COPY pyproject.toml ./
 
-# Gradle 래퍼와 설정 파일 복사
-COPY gradle/ gradle/
-COPY gradlew gradlew.bat gradle.properties settings.gradle.kts ./
+# Install application in development mode
+RUN pip install -e .
 
-# 빌드 스크립트 복사
-COPY build.gradle.kts ./
-
-# 소스 코드도 함께 복사하여 한 번에 빌드 (ARM64 안정성 향상)
-COPY src/ src/
-
-# 의존성 다운로드와 빌드를 한 번에 수행 (더 안정적)
-RUN ./gradlew clean shadowJar --no-daemon
-
-# 런타임 스테이지
-FROM eclipse-temurin:21-jre-alpine
-
-# 버전을 빌드 인수로 받기
-ARG VERSION=0.2.1
-ENV APP_VERSION=${VERSION}
-
-# 메타데이터 라벨
-LABEL maintainer="bifos"
-LABEL description="Dooray MCP Server - Model Context Protocol server for NHN Dooray"
-LABEL version="${APP_VERSION}"
-
-# 비루트 사용자 생성
-RUN addgroup -g 1000 dooray && \
-    adduser -D -s /bin/sh -u 1000 -G dooray dooray
-
-# 작업 디렉토리 설정
-WORKDIR /app
-
-# 빌드된 JAR 파일 복사 (와일드카드 사용으로 버전 무관하게 처리)
-COPY --from=builder /app/build/libs/*-all.jar app.jar
-
-# 파일 소유권 변경
+# Change ownership to non-root user
 RUN chown -R dooray:dooray /app
-
-# 비루트 사용자로 전환
 USER dooray
 
-# 헬스체크 (MCP 서버는 STDIO 통신이므로 프로세스 존재 여부만 확인)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD pgrep -f "java.*app.jar" > /dev/null || exit 1
-
-# 환경변수 기본값 설정
-ENV JAVA_OPTS="-Xms128m -Xmx512m"
-
-# 포트 노출 (MCP는 STDIO 통신이지만 문서화 목적)
+# Expose port for HTTP mode
 EXPOSE 8080
 
-# 엔트리포인트 설정
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=2)" || exit 1
 
-# 기본 명령어
-CMD [] 
+# Default command (can be overridden)
+CMD ["python", "-m", "dooray_mcp_server.main_http", "--host", "0.0.0.0", "--port", "8080"]

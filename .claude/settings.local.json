@@ -8,29 +8,22 @@
       "Bash(git remote set-url:*)",
       "WebFetch(domain:github.com)",
       "Bash(curl:*)",
-      "Bash(./gradlew:*)",
-      "Bash(CI=true ./gradlew test --console=plain)",
-      "Bash(DOORAY_API_KEY=\"ajjt1imxmtj4:F1h8NZUlRLCAQO0k75TZWg\" DOORAY_BASE_URL=\"https://api.dooray.com\" timeout 10 ./gradlew runLocal)",
-      "Bash(java:*)",
-      "Bash(rm:*)",
       "Bash(./scripts/docker-build.sh:*)",
       "Bash(export:*)",
-      "Bash(export PATH=$JAVA_HOME/bin:$PATH)",
       "Bash(git tag:*)",
       "Bash(gh run list:*)",
       "Bash(docker pull:*)",
-      "Bash(rg:*)",
       "Bash(docker build:*)",
       "WebFetch(domain:helpdesk.dooray.com)",
       "WebSearch",
       "WebFetch(domain:pydooray.readthedocs.io)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(python:*)",
+      "Bash(uv:*)"
     ],
     "deny": [],
     "ask": [],
     "defaultMode": "acceptEdits",
-    "additionalDirectories": [
-      "/opt/homebrew/Cellar/openjdk@21"
-    ]
+    "additionalDirectories": []
   }
 }

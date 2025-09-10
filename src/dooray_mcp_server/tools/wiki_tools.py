@@ -25,7 +25,7 @@ def get_wikis_tool() -> Tool:
                     "default": 0
                 },
                 "size": {
-                    "type": "integer", 
+                    "type": "integer",
                     "description": "한 페이지당 결과 수 (기본값: 200)",
                     "default": 200
                 }
@@ -39,9 +39,9 @@ async def get_wikis_handler(dooray_client: DoorayClient, arguments: Dict[str, An
     try:
         page = arguments.get("page", 0)
         size = arguments.get("size", 200)
-        
+
         response = await dooray_client.get_wikis(page, size)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -57,9 +57,9 @@ async def get_wikis_handler(dooray_client: DoorayClient, arguments: Dict[str, An
                 "message": "위키 프로젝트 목록 조회에 실패했습니다."
             }
             logger.error("Failed to retrieve wiki projects", error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -97,9 +97,9 @@ async def get_wiki_pages_handler(dooray_client: DoorayClient, arguments: Dict[st
     try:
         project_id = arguments["project_id"]
         parent_page_id = arguments.get("parent_page_id")
-        
+
         response = await dooray_client.get_wiki_pages(project_id, parent_page_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -107,8 +107,8 @@ async def get_wiki_pages_handler(dooray_client: DoorayClient, arguments: Dict[st
                 "totalCount": response.get("totalCount"),
                 "message": f"위키 페이지 목록을 성공적으로 조회했습니다. (프로젝트: {project_id})"
             }
-            logger.info("Wiki pages retrieved successfully", 
-                       project_id=project_id, 
+            logger.info("Wiki pages retrieved successfully",
+                       project_id=project_id,
                        count=len(response.get("result", [])))
         else:
             result = {
@@ -116,12 +116,12 @@ async def get_wiki_pages_handler(dooray_client: DoorayClient, arguments: Dict[st
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"위키 페이지 목록 조회에 실패했습니다. (프로젝트: {project_id})"
             }
-            logger.error("Failed to retrieve wiki pages", 
-                        project_id=project_id, 
+            logger.error("Failed to retrieve wiki pages",
+                        project_id=project_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -145,7 +145,7 @@ def get_wiki_page_tool() -> Tool:
                     "description": "위키 프로젝트 ID"
                 },
                 "page_id": {
-                    "type": "string", 
+                    "type": "string",
                     "description": "위키 페이지 ID"
                 }
             },
@@ -159,17 +159,17 @@ async def get_wiki_page_handler(dooray_client: DoorayClient, arguments: Dict[str
     try:
         project_id = arguments["project_id"]
         page_id = arguments["page_id"]
-        
+
         response = await dooray_client.get_wiki_page(project_id, page_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "page": response.get("result"),
                 "message": f"위키 페이지를 성공적으로 조회했습니다. (페이지: {page_id})"
             }
-            logger.info("Wiki page retrieved successfully", 
-                       project_id=project_id, 
+            logger.info("Wiki page retrieved successfully",
+                       project_id=project_id,
                        page_id=page_id)
         else:
             result = {
@@ -177,13 +177,13 @@ async def get_wiki_page_handler(dooray_client: DoorayClient, arguments: Dict[str
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"위키 페이지 조회에 실패했습니다. (페이지: {page_id})"
             }
-            logger.error("Failed to retrieve wiki page", 
-                        project_id=project_id, 
+            logger.error("Failed to retrieve wiki page",
+                        project_id=project_id,
                         page_id=page_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -232,20 +232,20 @@ async def create_wiki_page_handler(dooray_client: DoorayClient, arguments: Dict[
             "title": arguments["title"],
             "content": arguments["content"]
         }
-        
+
         if "parent_page_id" in arguments:
             request_data["parentPageId"] = arguments["parent_page_id"]
-        
+
         response = await dooray_client.create_wiki_page(wiki_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "page": response.get("result"),
                 "message": f"위키 페이지를 성공적으로 생성했습니다. (제목: {arguments['title']})"
             }
-            logger.info("Wiki page created successfully", 
-                       wiki_id=wiki_id, 
+            logger.info("Wiki page created successfully",
+                       wiki_id=wiki_id,
                        title=arguments["title"])
         else:
             result = {
@@ -253,13 +253,13 @@ async def create_wiki_page_handler(dooray_client: DoorayClient, arguments: Dict[
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"위키 페이지 생성에 실패했습니다. (제목: {arguments['title']})"
             }
-            logger.error("Failed to create wiki page", 
-                        wiki_id=wiki_id, 
+            logger.error("Failed to create wiki page",
+                        wiki_id=wiki_id,
                         title=arguments["title"],
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -306,21 +306,21 @@ async def update_wiki_page_handler(dooray_client: DoorayClient, arguments: Dict[
         wiki_id = arguments["wiki_id"]
         page_id = arguments["page_id"]
         request_data = {}
-        
+
         if "title" in arguments:
             request_data["title"] = arguments["title"]
         if "content" in arguments:
             request_data["content"] = arguments["content"]
-        
+
         response = await dooray_client.update_wiki_page(wiki_id, page_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"위키 페이지를 성공적으로 수정했습니다. (페이지: {page_id})"
             }
-            logger.info("Wiki page updated successfully", 
-                       wiki_id=wiki_id, 
+            logger.info("Wiki page updated successfully",
+                       wiki_id=wiki_id,
                        page_id=page_id)
         else:
             result = {
@@ -328,13 +328,13 @@ async def update_wiki_page_handler(dooray_client: DoorayClient, arguments: Dict[
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"위키 페이지 수정에 실패했습니다. (페이지: {page_id})"
             }
-            logger.error("Failed to update wiki page", 
-                        wiki_id=wiki_id, 
+            logger.error("Failed to update wiki page",
+                        wiki_id=wiki_id,
                         page_id=page_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,

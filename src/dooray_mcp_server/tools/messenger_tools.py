@@ -55,7 +55,7 @@ async def search_members_handler(dooray_client: DoorayClient, arguments: Dict[st
         user_code = arguments.get("user_code")
         page = arguments.get("page", 0)
         size = arguments.get("size", 10)
-        
+
         response = await dooray_client.search_members(
             name=name,
             external_email_addresses=external_email_addresses,
@@ -63,7 +63,7 @@ async def search_members_handler(dooray_client: DoorayClient, arguments: Dict[st
             page=page,
             size=size
         )
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -71,7 +71,7 @@ async def search_members_handler(dooray_client: DoorayClient, arguments: Dict[st
                 "totalCount": response.get("totalCount"),
                 "message": "멤버 검색을 성공적으로 완료했습니다."
             }
-            logger.info("Members search completed successfully", 
+            logger.info("Members search completed successfully",
                        count=len(response.get("result", [])))
         else:
             result = {
@@ -80,9 +80,9 @@ async def search_members_handler(dooray_client: DoorayClient, arguments: Dict[st
                 "message": "멤버 검색에 실패했습니다."
             }
             logger.error("Failed to search members", error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -122,15 +122,15 @@ async def send_direct_message_handler(dooray_client: DoorayClient, arguments: Di
             "organizationMemberId": arguments["organization_member_id"],
             "text": arguments["text"]
         }
-        
+
         response = await dooray_client.send_direct_message(request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"다이렉트 메시지를 성공적으로 전송했습니다. (수신자: {arguments['organization_member_id']})"
             }
-            logger.info("Direct message sent successfully", 
+            logger.info("Direct message sent successfully",
                        recipient=arguments["organization_member_id"])
         else:
             result = {
@@ -138,12 +138,12 @@ async def send_direct_message_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"다이렉트 메시지 전송에 실패했습니다. (수신자: {arguments['organization_member_id']})"
             }
-            logger.error("Failed to send direct message", 
+            logger.error("Failed to send direct message",
                         recipient=arguments["organization_member_id"],
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -187,9 +187,9 @@ async def get_channels_handler(dooray_client: DoorayClient, arguments: Dict[str,
         page = arguments.get("page", 0)
         size = arguments.get("size", 200)
         recent_months = arguments.get("recent_months")
-        
+
         response = await dooray_client.get_channels(page, size, recent_months)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -199,8 +199,8 @@ async def get_channels_handler(dooray_client: DoorayClient, arguments: Dict[str,
             }
             if recent_months:
                 result["message"] += f" (최근 {recent_months}개월 필터링 적용)"
-            
-            logger.info("Channels retrieved successfully", 
+
+            logger.info("Channels retrieved successfully",
                        count=len(response.get("result", [])),
                        recent_months=recent_months)
         else:
@@ -210,9 +210,9 @@ async def get_channels_handler(dooray_client: DoorayClient, arguments: Dict[str,
                 "message": "채널 목록 조회에 실패했습니다."
             }
             logger.error("Failed to retrieve channels", error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -256,9 +256,9 @@ async def get_simple_channels_handler(dooray_client: DoorayClient, arguments: Di
         page = arguments.get("page", 0)
         size = arguments.get("size", 50)
         recent_months = arguments.get("recent_months")
-        
+
         response = await dooray_client.get_simple_channels(page, size, recent_months)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -268,8 +268,8 @@ async def get_simple_channels_handler(dooray_client: DoorayClient, arguments: Di
             }
             if recent_months:
                 result["message"] += f" (최근 {recent_months}개월 필터링 적용)"
-            
-            logger.info("Simple channels retrieved successfully", 
+
+            logger.info("Simple channels retrieved successfully",
                        count=len(response.get("result", [])),
                        recent_months=recent_months)
         else:
@@ -279,9 +279,9 @@ async def get_simple_channels_handler(dooray_client: DoorayClient, arguments: Di
                 "message": "간소화된 채널 목록 조회에 실패했습니다."
             }
             logger.error("Failed to retrieve simple channels", error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -314,16 +314,16 @@ async def get_channel_handler(dooray_client: DoorayClient, arguments: Dict[str, 
     """Handler for getting channel details."""
     try:
         channel_id = arguments["channel_id"]
-        
+
         channel = await dooray_client.get_channel(channel_id)
-        
+
         if channel:
             result = {
                 "success": True,
                 "channel": channel,
                 "message": f"채널 상세 정보를 성공적으로 조회했습니다. (채널: {channel_id})"
             }
-            logger.info("Channel details retrieved successfully", 
+            logger.info("Channel details retrieved successfully",
                        channel_id=channel_id)
         else:
             result = {
@@ -332,9 +332,9 @@ async def get_channel_handler(dooray_client: DoorayClient, arguments: Dict[str, 
                 "message": f"채널을 찾을 수 없습니다. (채널: {channel_id})"
             }
             logger.warning("Channel not found", channel_id=channel_id)
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -390,21 +390,21 @@ async def create_channel_handler(dooray_client: DoorayClient, arguments: Dict[st
             "title": arguments["title"],
             "memberIds": arguments["member_ids"]
         }
-        
+
         if "capacity" in arguments:
             request_data["capacity"] = arguments["capacity"]
-        
+
         id_type = arguments.get("id_type")
-        
+
         response = await dooray_client.create_channel(request_data, id_type)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "channel": response.get("result"),
                 "message": f"채널을 성공적으로 생성했습니다. (제목: {arguments['title']})"
             }
-            logger.info("Channel created successfully", 
+            logger.info("Channel created successfully",
                        title=arguments["title"],
                        channel_type=arguments["type"])
         else:
@@ -413,12 +413,12 @@ async def create_channel_handler(dooray_client: DoorayClient, arguments: Dict[st
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"채널 생성에 실패했습니다. (제목: {arguments['title']})"
             }
-            logger.error("Failed to create channel", 
+            logger.error("Failed to create channel",
                         title=arguments["title"],
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -476,35 +476,35 @@ async def send_channel_message_handler(dooray_client: DoorayClient, arguments: D
         text = arguments["text"]
         mention_members = arguments.get("mention_members", [])
         mention_all = arguments.get("mention_all", False)
-        
+
         # Build message text with mentions
         message_text = text
-        
+
         # Add individual member mentions
         for member in mention_members:
             member_mention = f"[@{member['name']}](dooray://{member['organizationId']}/members/{member['id']} \"member\")"
             if member_mention not in message_text:
                 message_text = member_mention + "\n" + message_text
-        
+
         # Add channel mention if requested
         if mention_all:
             # Note: This would need the channel's organizationId - simplified for this example
             channel_mention = "[@Channel](dooray://organization/channels/" + channel_id + " \"channel\")"
             if channel_mention not in message_text:
                 message_text = channel_mention + "\n" + message_text
-        
+
         request_data = {
             "text": message_text
         }
-        
+
         response = await dooray_client.send_channel_message(channel_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"채널 메시지를 성공적으로 전송했습니다. (채널: {channel_id})"
             }
-            logger.info("Channel message sent successfully", 
+            logger.info("Channel message sent successfully",
                        channel_id=channel_id,
                        mention_count=len(mention_members),
                        mention_all=mention_all)
@@ -514,12 +514,12 @@ async def send_channel_message_handler(dooray_client: DoorayClient, arguments: D
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"채널 메시지 전송에 실패했습니다. (채널: {channel_id})"
             }
-            logger.error("Failed to send channel message", 
+            logger.error("Failed to send channel message",
                         channel_id=channel_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,

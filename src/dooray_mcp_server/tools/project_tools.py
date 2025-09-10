@@ -54,7 +54,7 @@ async def get_projects_handler(dooray_client: DoorayClient, arguments: Dict[str,
         project_type = arguments.get("type")
         scope = arguments.get("scope")
         state = arguments.get("state")
-        
+
         kwargs = {}
         if project_type:
             kwargs["type"] = project_type
@@ -62,9 +62,9 @@ async def get_projects_handler(dooray_client: DoorayClient, arguments: Dict[str,
             kwargs["scope"] = scope
         if state:
             kwargs["state"] = state
-        
+
         response = await dooray_client.get_projects(page, size, **kwargs)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -80,9 +80,9 @@ async def get_projects_handler(dooray_client: DoorayClient, arguments: Dict[str,
                 "message": "프로젝트 목록 조회에 실패했습니다."
             }
             logger.error("Failed to retrieve projects", error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -141,7 +141,7 @@ async def get_project_posts_handler(dooray_client: DoorayClient, arguments: Dict
         project_id = arguments["project_id"]
         page = arguments.get("page", 0)
         size = arguments.get("size", 200)
-        
+
         kwargs = {}
         if "from_member_ids" in arguments:
             kwargs["fromMemberIds"] = arguments["from_member_ids"]
@@ -149,9 +149,9 @@ async def get_project_posts_handler(dooray_client: DoorayClient, arguments: Dict
             kwargs["toMemberIds"] = arguments["to_member_ids"]
         if "subjects" in arguments:
             kwargs["subjects"] = arguments["subjects"]
-        
+
         response = await dooray_client.get_posts(project_id, page, size, **kwargs)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -159,8 +159,8 @@ async def get_project_posts_handler(dooray_client: DoorayClient, arguments: Dict
                 "totalCount": response.get("totalCount"),
                 "message": f"프로젝트 업무 목록을 성공적으로 조회했습니다. (프로젝트: {project_id})"
             }
-            logger.info("Project posts retrieved successfully", 
-                       project_id=project_id, 
+            logger.info("Project posts retrieved successfully",
+                       project_id=project_id,
                        count=len(response.get("result", [])))
         else:
             result = {
@@ -168,12 +168,12 @@ async def get_project_posts_handler(dooray_client: DoorayClient, arguments: Dict
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"프로젝트 업무 목록 조회에 실패했습니다. (프로젝트: {project_id})"
             }
-            logger.error("Failed to retrieve project posts", 
-                        project_id=project_id, 
+            logger.error("Failed to retrieve project posts",
+                        project_id=project_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -211,17 +211,17 @@ async def get_project_post_handler(dooray_client: DoorayClient, arguments: Dict[
     try:
         project_id = arguments["project_id"]
         post_id = arguments["post_id"]
-        
+
         response = await dooray_client.get_post(project_id, post_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "post": response.get("result"),
                 "message": f"업무 상세 정보를 성공적으로 조회했습니다. (업무: {post_id})"
             }
-            logger.info("Project post retrieved successfully", 
-                       project_id=project_id, 
+            logger.info("Project post retrieved successfully",
+                       project_id=project_id,
                        post_id=post_id)
         else:
             result = {
@@ -229,13 +229,13 @@ async def get_project_post_handler(dooray_client: DoorayClient, arguments: Dict[
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 상세 정보 조회에 실패했습니다. (업무: {post_id})"
             }
-            logger.error("Failed to retrieve project post", 
-                        project_id=project_id, 
+            logger.error("Failed to retrieve project post",
+                        project_id=project_id,
                         post_id=post_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -295,24 +295,24 @@ async def create_project_post_handler(dooray_client: DoorayClient, arguments: Di
             "subject": arguments["subject"],
             "body": arguments["body"]
         }
-        
+
         if "to_member_ids" in arguments:
             request_data["toMemberIds"] = arguments["to_member_ids"]
         if "cc_member_ids" in arguments:
             request_data["ccMemberIds"] = arguments["cc_member_ids"]
         if "priority" in arguments:
             request_data["priority"] = arguments["priority"]
-        
+
         response = await dooray_client.create_post(project_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "post": response.get("result"),
                 "message": f"업무를 성공적으로 생성했습니다. (제목: {arguments['subject']})"
             }
-            logger.info("Project post created successfully", 
-                       project_id=project_id, 
+            logger.info("Project post created successfully",
+                       project_id=project_id,
                        subject=arguments["subject"])
         else:
             result = {
@@ -320,13 +320,13 @@ async def create_project_post_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 생성에 실패했습니다. (제목: {arguments['subject']})"
             }
-            logger.error("Failed to create project post", 
-                        project_id=project_id, 
+            logger.error("Failed to create project post",
+                        project_id=project_id,
                         subject=arguments["subject"],
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -378,23 +378,23 @@ async def update_project_post_handler(dooray_client: DoorayClient, arguments: Di
         project_id = arguments["project_id"]
         post_id = arguments["post_id"]
         request_data = {}
-        
+
         if "subject" in arguments:
             request_data["subject"] = arguments["subject"]
         if "body" in arguments:
             request_data["body"] = arguments["body"]
         if "priority" in arguments:
             request_data["priority"] = arguments["priority"]
-        
+
         response = await dooray_client.update_post(project_id, post_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"업무를 성공적으로 수정했습니다. (업무: {post_id})"
             }
-            logger.info("Project post updated successfully", 
-                       project_id=project_id, 
+            logger.info("Project post updated successfully",
+                       project_id=project_id,
                        post_id=post_id)
         else:
             result = {
@@ -402,13 +402,13 @@ async def update_project_post_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 수정에 실패했습니다. (업무: {post_id})"
             }
-            logger.error("Failed to update project post", 
-                        project_id=project_id, 
+            logger.error("Failed to update project post",
+                        project_id=project_id,
                         post_id=post_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -451,16 +451,16 @@ async def set_project_post_workflow_handler(dooray_client: DoorayClient, argumen
         project_id = arguments["project_id"]
         post_id = arguments["post_id"]
         workflow_id = arguments["workflow_id"]
-        
+
         response = await dooray_client.set_post_workflow(project_id, post_id, workflow_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"업무 상태를 성공적으로 변경했습니다. (업무: {post_id})"
             }
-            logger.info("Project post workflow set successfully", 
-                       project_id=project_id, 
+            logger.info("Project post workflow set successfully",
+                       project_id=project_id,
                        post_id=post_id,
                        workflow_id=workflow_id)
         else:
@@ -469,14 +469,14 @@ async def set_project_post_workflow_handler(dooray_client: DoorayClient, argumen
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 상태 변경에 실패했습니다. (업무: {post_id})"
             }
-            logger.error("Failed to set project post workflow", 
-                        project_id=project_id, 
+            logger.error("Failed to set project post workflow",
+                        project_id=project_id,
                         post_id=post_id,
                         workflow_id=workflow_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -514,16 +514,16 @@ async def set_project_post_done_handler(dooray_client: DoorayClient, arguments: 
     try:
         project_id = arguments["project_id"]
         post_id = arguments["post_id"]
-        
+
         response = await dooray_client.set_post_done(project_id, post_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"업무를 성공적으로 완료 처리했습니다. (업무: {post_id})"
             }
-            logger.info("Project post set as done successfully", 
-                       project_id=project_id, 
+            logger.info("Project post set as done successfully",
+                       project_id=project_id,
                        post_id=post_id)
         else:
             result = {
@@ -531,13 +531,13 @@ async def set_project_post_done_handler(dooray_client: DoorayClient, arguments: 
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 완료 처리에 실패했습니다. (업무: {post_id})"
             }
-            logger.error("Failed to set project post as done", 
-                        project_id=project_id, 
+            logger.error("Failed to set project post as done",
+                        project_id=project_id,
                         post_id=post_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -590,17 +590,17 @@ async def create_post_comment_handler(dooray_client: DoorayClient, arguments: Di
             "content": arguments["content"],
             "mimeType": arguments.get("mime_type", "text/x-markdown")
         }
-        
+
         response = await dooray_client.create_post_comment(project_id, post_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "comment": response.get("result"),
                 "message": f"업무 댓글을 성공적으로 생성했습니다. (업무: {post_id})"
             }
-            logger.info("Post comment created successfully", 
-                       project_id=project_id, 
+            logger.info("Post comment created successfully",
+                       project_id=project_id,
                        post_id=post_id)
         else:
             result = {
@@ -608,13 +608,13 @@ async def create_post_comment_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 댓글 생성에 실패했습니다. (업무: {post_id})"
             }
-            logger.error("Failed to create post comment", 
-                        project_id=project_id, 
+            logger.error("Failed to create post comment",
+                        project_id=project_id,
                         post_id=post_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -669,9 +669,9 @@ async def get_post_comments_handler(dooray_client: DoorayClient, arguments: Dict
         page = arguments.get("page", 0)
         size = arguments.get("size", 200)
         order = arguments.get("order")
-        
+
         response = await dooray_client.get_post_comments(project_id, post_id, page, size, order)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -679,8 +679,8 @@ async def get_post_comments_handler(dooray_client: DoorayClient, arguments: Dict
                 "totalCount": response.get("totalCount"),
                 "message": f"업무 댓글 목록을 성공적으로 조회했습니다. (업무: {post_id})"
             }
-            logger.info("Post comments retrieved successfully", 
-                       project_id=project_id, 
+            logger.info("Post comments retrieved successfully",
+                       project_id=project_id,
                        post_id=post_id,
                        count=len(response.get("result", [])))
         else:
@@ -689,13 +689,13 @@ async def get_post_comments_handler(dooray_client: DoorayClient, arguments: Dict
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 댓글 목록 조회에 실패했습니다. (업무: {post_id})"
             }
-            logger.error("Failed to retrieve post comments", 
-                        project_id=project_id, 
+            logger.error("Failed to retrieve post comments",
+                        project_id=project_id,
                         post_id=post_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -751,16 +751,16 @@ async def update_post_comment_handler(dooray_client: DoorayClient, arguments: Di
             "content": arguments["content"],
             "mimeType": arguments.get("mime_type", "text/x-markdown")
         }
-        
+
         response = await dooray_client.update_post_comment(project_id, post_id, log_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"업무 댓글을 성공적으로 수정했습니다. (댓글: {log_id})"
             }
-            logger.info("Post comment updated successfully", 
-                       project_id=project_id, 
+            logger.info("Post comment updated successfully",
+                       project_id=project_id,
                        post_id=post_id,
                        log_id=log_id)
         else:
@@ -769,14 +769,14 @@ async def update_post_comment_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 댓글 수정에 실패했습니다. (댓글: {log_id})"
             }
-            logger.error("Failed to update post comment", 
-                        project_id=project_id, 
+            logger.error("Failed to update post comment",
+                        project_id=project_id,
                         post_id=post_id,
                         log_id=log_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -819,16 +819,16 @@ async def delete_post_comment_handler(dooray_client: DoorayClient, arguments: Di
         project_id = arguments["project_id"]
         post_id = arguments["post_id"]
         log_id = arguments["log_id"]
-        
+
         response = await dooray_client.delete_post_comment(project_id, post_id, log_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "message": f"업무 댓글을 성공적으로 삭제했습니다. (댓글: {log_id})"
             }
-            logger.info("Post comment deleted successfully", 
-                       project_id=project_id, 
+            logger.info("Post comment deleted successfully",
+                       project_id=project_id,
                        post_id=post_id,
                        log_id=log_id)
         else:
@@ -837,14 +837,14 @@ async def delete_post_comment_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"업무 댓글 삭제에 실패했습니다. (댓글: {log_id})"
             }
-            logger.error("Failed to delete post comment", 
-                        project_id=project_id, 
+            logger.error("Failed to delete post comment",
+                        project_id=project_id,
                         post_id=post_id,
                         log_id=log_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,

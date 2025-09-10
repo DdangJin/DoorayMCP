@@ -3,14 +3,13 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
-from ..types.dooray_api_types import *
+from ..types.dooray_api_types import DoorayApiResponse
 
 
 class DoorayClient(ABC):
     """Abstract base class for Dooray API clients."""
 
     # ============ Wiki related methods ============
-    
     @abstractmethod
     async def get_wikis(self, page: Optional[int] = None, size: Optional[int] = None) -> Dict[str, Any]:
         """Get list of wikis."""
@@ -37,7 +36,7 @@ class DoorayClient(ABC):
         pass
 
     # ============ Project post related methods ============
-    
+
     @abstractmethod
     async def create_post(self, project_id: str, request: Dict[str, Any]) -> Dict[str, Any]:
         """Create a new project post."""
@@ -75,7 +74,7 @@ class DoorayClient(ABC):
         pass
 
     # ============ Project comment related methods ============
-    
+
     @abstractmethod
     async def create_post_comment(self, project_id: str, post_id: str, request: Dict[str, Any]) -> Dict[str, Any]:
         """Create a post comment."""
@@ -110,7 +109,7 @@ class DoorayClient(ABC):
         pass
 
     # ============ Project related methods ============
-    
+
     @abstractmethod
     async def get_projects(
         self,
@@ -122,7 +121,7 @@ class DoorayClient(ABC):
         pass
 
     # ============ Messenger related methods ============
-    
+
     @abstractmethod
     async def search_members(
         self,
@@ -177,7 +176,7 @@ class DoorayClient(ABC):
         pass
 
     # ============ Calendar related methods ============
-    
+
     @abstractmethod
     async def get_calendars(self) -> Dict[str, Any]:
         """Get list of calendars."""

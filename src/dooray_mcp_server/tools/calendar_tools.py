@@ -27,7 +27,7 @@ async def get_calendars_handler(dooray_client: DoorayClient, arguments: Dict[str
     """Handler for getting calendars list."""
     try:
         response = await dooray_client.get_calendars()
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -35,7 +35,7 @@ async def get_calendars_handler(dooray_client: DoorayClient, arguments: Dict[str
                 "totalCount": len(response.get("result", [])),
                 "message": "캘린더 목록을 성공적으로 조회했습니다."
             }
-            logger.info("Calendars retrieved successfully", 
+            logger.info("Calendars retrieved successfully",
                        count=len(response.get("result", [])))
         else:
             result = {
@@ -44,9 +44,9 @@ async def get_calendars_handler(dooray_client: DoorayClient, arguments: Dict[str
                 "message": "캘린더 목록 조회에 실패했습니다."
             }
             logger.error("Failed to retrieve calendars", error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -79,16 +79,16 @@ async def get_calendar_detail_handler(dooray_client: DoorayClient, arguments: Di
     """Handler for getting calendar details."""
     try:
         calendar_id = arguments["calendar_id"]
-        
+
         response = await dooray_client.get_calendar_detail(calendar_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "calendar": response.get("result"),
                 "message": f"캘린더 상세 정보를 성공적으로 조회했습니다. (캘린더: {calendar_id})"
             }
-            logger.info("Calendar details retrieved successfully", 
+            logger.info("Calendar details retrieved successfully",
                        calendar_id=calendar_id)
         else:
             result = {
@@ -96,12 +96,12 @@ async def get_calendar_detail_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"캘린더 상세 정보 조회에 실패했습니다. (캘린더: {calendar_id})"
             }
-            logger.error("Failed to retrieve calendar details", 
+            logger.error("Failed to retrieve calendar details",
                         calendar_id=calendar_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -156,7 +156,7 @@ async def get_calendar_events_handler(dooray_client: DoorayClient, arguments: Di
         calendars = arguments.get("calendars")
         post_type = arguments.get("post_type")
         category = arguments.get("category")
-        
+
         response = await dooray_client.get_calendar_events(
             calendars=calendars,
             time_min=time_min,
@@ -164,7 +164,7 @@ async def get_calendar_events_handler(dooray_client: DoorayClient, arguments: Di
             post_type=post_type,
             category=category
         )
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
@@ -172,7 +172,7 @@ async def get_calendar_events_handler(dooray_client: DoorayClient, arguments: Di
                 "totalCount": len(response.get("result", [])),
                 "message": f"캘린더 이벤트 목록을 성공적으로 조회했습니다. ({time_min} ~ {time_max})"
             }
-            logger.info("Calendar events retrieved successfully", 
+            logger.info("Calendar events retrieved successfully",
                        time_min=time_min,
                        time_max=time_max,
                        count=len(response.get("result", [])))
@@ -182,13 +182,13 @@ async def get_calendar_events_handler(dooray_client: DoorayClient, arguments: Di
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"캘린더 이벤트 목록 조회에 실패했습니다. ({time_min} ~ {time_max})"
             }
-            logger.error("Failed to retrieve calendar events", 
+            logger.error("Failed to retrieve calendar events",
                         time_min=time_min,
                         time_max=time_max,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -226,16 +226,16 @@ async def get_calendar_event_detail_handler(dooray_client: DoorayClient, argumen
     try:
         calendar_id = arguments["calendar_id"]
         event_id = arguments["event_id"]
-        
+
         response = await dooray_client.get_calendar_event_detail(calendar_id, event_id)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "event": response.get("result"),
                 "message": f"캘린더 이벤트 상세 정보를 성공적으로 조회했습니다. (이벤트: {event_id})"
             }
-            logger.info("Calendar event details retrieved successfully", 
+            logger.info("Calendar event details retrieved successfully",
                        calendar_id=calendar_id,
                        event_id=event_id)
         else:
@@ -244,13 +244,13 @@ async def get_calendar_event_detail_handler(dooray_client: DoorayClient, argumen
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"캘린더 이벤트 상세 정보 조회에 실패했습니다. (이벤트: {event_id})"
             }
-            logger.error("Failed to retrieve calendar event details", 
+            logger.error("Failed to retrieve calendar event details",
                         calendar_id=calendar_id,
                         event_id=event_id,
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,
@@ -314,21 +314,21 @@ async def create_calendar_event_handler(dooray_client: DoorayClient, arguments: 
             "endedAt": arguments["ended_at"],
             "wholeDayFlag": arguments.get("whole_day_flag", False)
         }
-        
+
         if "content" in arguments:
             request_data["content"] = arguments["content"]
         if "location" in arguments:
             request_data["location"] = arguments["location"]
-        
+
         response = await dooray_client.create_calendar_event(calendar_id, request_data)
-        
+
         if response.get("header", {}).get("isSuccessful"):
             result = {
                 "success": True,
                 "event": response.get("result"),
                 "message": f"캘린더 이벤트를 성공적으로 생성했습니다. (제목: {arguments['subject']})"
             }
-            logger.info("Calendar event created successfully", 
+            logger.info("Calendar event created successfully",
                        calendar_id=calendar_id,
                        subject=arguments["subject"])
         else:
@@ -337,13 +337,13 @@ async def create_calendar_event_handler(dooray_client: DoorayClient, arguments: 
                 "error": response.get("header", {}).get("resultMessage", "Unknown error"),
                 "message": f"캘린더 이벤트 생성에 실패했습니다. (제목: {arguments['subject']})"
             }
-            logger.error("Failed to create calendar event", 
+            logger.error("Failed to create calendar event",
                         calendar_id=calendar_id,
                         subject=arguments["subject"],
                         error=result["error"])
-            
+
         return [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
-        
+
     except Exception as e:
         error_result = {
             "success": False,

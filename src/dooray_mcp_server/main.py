@@ -15,7 +15,7 @@ from .server import DoorayMcpServer
 def configure_logging():
     """Configure structured logging."""
     log_level = os.getenv(DOORAY_LOG_LEVEL, DEFAULT_LOG_LEVEL).upper()
-    
+
     # Map string levels to structlog levels
     level_mapping = {
         "DEBUG": structlog.stdlib.DEBUG,
@@ -24,9 +24,9 @@ def configure_logging():
         "WARNING": structlog.stdlib.WARNING,
         "ERROR": structlog.stdlib.ERROR
     }
-    
+
     level = level_mapping.get(log_level, structlog.stdlib.WARNING)
-    
+
     structlog.configure(
         processors=[
             structlog.stdlib.filter_by_level,
@@ -48,18 +48,18 @@ async def main():
     if env_file.exists():
         load_dotenv(env_file)
         print(f"📄 Loaded environment variables from {env_file}", file=sys.stderr)
-    
+
     # Configure logging
     configure_logging()
-    
+
     logger = structlog.get_logger(__name__)
     logger.info("🚀 Starting Dooray MCP Server (STDIO mode)", version=SERVER_VERSION)
-    
+
     try:
         # Create and start server
         server = DoorayMcpServer()
         await server.start_stdio_server()
-        
+
     except KeyboardInterrupt:
         logger.info("Received interrupt signal, shutting down...")
     except Exception as e:

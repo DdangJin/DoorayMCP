@@ -1,0 +1,21 @@
+# Ignore markdown files
+*.md
+
+# Ignore legacy Kotlin files
+old/
+
+# Ignore build artifacts
+build/
+dist/
+*.pyc
+__pycache__/
+
+# Ignore git and editor files
+.git/
+.vscode/
+.idea/
+
+# Ignore environment files
+.env
+.env.local
+.env.*.local

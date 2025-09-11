@@ -51,6 +51,8 @@ dev = [
 [project.scripts]
 dooray-mcp-server = "dooray_mcp_server.main:cli_main"
 dooray-mcp-server-http = "dooray_mcp_server.main_http:cli_main"
+dooray-mcp-server-streamable = "dooray_mcp_server.main_streamable_http:cli_main"
+dooray-mcp-server-sse = "dooray_mcp_server.main_sse:cli_main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

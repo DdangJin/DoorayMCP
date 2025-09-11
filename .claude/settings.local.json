@@ -20,7 +20,10 @@
       "Bash(python:*)",
       "Bash(uv:*)",
       "Bash(gh run view:*)",
-      "Bash(ruff check:*)"
+      "Bash(ruff check:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(gh repo view:*)"
     ],
     "deny": [],
     "ask": [],

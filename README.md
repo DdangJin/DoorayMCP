@@ -225,6 +225,59 @@ dooray-mcp-server-http \
 
 ## 🔧 개발
 
+### 개발 명령어
+
+#### 설정 및 설치
+```bash
+# 개발 의존성과 함께 설치
+pip install -e ".[dev]"
+
+# 가상환경 없이 즉시 실행하려면 uvx 사용
+uvx --from . dooray-mcp-server-streamable
+```
+
+#### 서버 실행 (4가지 전송 방식)
+
+**1. STDIO 모드 (Claude Desktop용)**
+```bash
+# Python 모듈로 실행
+python -m dooray_mcp_server.main
+# 또는 설치 후:
+dooray-mcp-server
+# 또는 uv 사용:
+uv run dooray-mcp-server
+```
+
+**2. Streamable HTTP 모드 (MCP 표준 준수, 권장)**
+```bash
+# Python 모듈로 실행
+python -m dooray_mcp_server.main_streamable_http
+# 또는 설치 후:
+dooray-mcp-server-streamable --host 127.0.0.1 --port 8080
+# 또는 uv 사용:
+uv run dooray-mcp-server-streamable --port 8080
+```
+
+**3. SSE 모드 (Server-Sent Events)**
+```bash
+# Python 모듈로 실행
+python -m dooray_mcp_server.main_sse
+# 또는 설치 후:
+dooray-mcp-server-sse --host 127.0.0.1 --port 8080
+# 또는 uv 사용:
+uv run dooray-mcp-server-sse --port 8080
+```
+
+**4. HTTP 모드 (레거시, 호환성용)**
+```bash
+# Python 모듈로 실행
+python -m dooray_mcp_server.main_http
+# 또는 설치 후:
+dooray-mcp-server-http --host 127.0.0.1 --port 8080
+# 또는 uv 사용:
+uv run dooray-mcp-server-http --port 8080
+```
+
 ### 테스트 실행
 ```bash
 pytest                    # 단위 테스트

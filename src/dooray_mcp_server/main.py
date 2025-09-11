@@ -16,17 +16,22 @@ def configure_logging():
     """Configure structured logging."""
     log_level = os.getenv(DOORAY_LOG_LEVEL, DEFAULT_LOG_LEVEL).upper()
 
-    # Map string levels to structlog levels
+    # Map string levels to logging levels
+    import logging
     level_mapping = {
-        "DEBUG": structlog.stdlib.DEBUG,
-        "INFO": structlog.stdlib.INFO,
-        "WARN": structlog.stdlib.WARNING,
-        "WARNING": structlog.stdlib.WARNING,
-        "ERROR": structlog.stdlib.ERROR
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARN": logging.WARNING,
+        "WARNING": logging.WARNING,
+        "ERROR": logging.ERROR
     }
 
-    level = level_mapping.get(log_level, structlog.stdlib.WARNING)
+    level = level_mapping.get(log_level, logging.WARNING)
 
+    # Configure Python logging first
+    import logging
+    logging.basicConfig(level=level, format='%(message)s')
+    
     structlog.configure(
         processors=[
             structlog.stdlib.filter_by_level,
@@ -36,7 +41,6 @@ def configure_logging():
         ],
         wrapper_class=structlog.stdlib.BoundLogger,
         logger_factory=structlog.stdlib.LoggerFactory(),
-        level=level,
         cache_logger_on_first_use=True,
     )
 

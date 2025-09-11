@@ -461,7 +461,7 @@ def send_channel_message_tool() -> Tool:
                 "mention_all": {
                     "type": "boolean",
                     "description": "전체 멘션 여부 (@Channel, 선택사항)",
-                    "default": false
+                    "default": False
                 }
             },
             "required": ["channel_id", "text"]

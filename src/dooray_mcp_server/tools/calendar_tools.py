@@ -296,7 +296,7 @@ def create_calendar_event_tool() -> Tool:
                 "whole_day_flag": {
                     "type": "boolean",
                     "description": "종일 이벤트 여부 (기본값: false)",
-                    "default": false
+                    "default": False
                 }
             },
             "required": ["calendar_id", "subject", "started_at", "ended_at"]
